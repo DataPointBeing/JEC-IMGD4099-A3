@@ -71,7 +71,7 @@ pane.addBinding(tpParams, 'brushSize', {min: 5, max: 200 }).on('change',  e => {
 
 sg.buffers({ stAin:stateA, stAout:stateA, stBin:stateB, stBout:stateB, stColin:stateColor, stColout:stateColor})
    .uniforms({
-      res:[window.innerWidth, window.innerHeight],
+      res: [window.innerWidth, window.innerHeight],
       Da: tpParams.da,
       Db: tpParams.db,
       f: tpParams.feed,
