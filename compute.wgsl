@@ -5,13 +5,15 @@
 @group(0) @binding(4) var<uniform> k: f32;
 @group(0) @binding(5) var<uniform> mseState: vec3f;
 @group(0) @binding(6) var<uniform> funColor: vec3f;
-@group(0) @binding(7) var<uniform> frames: f32;
-@group(0) @binding(8) var<storage, read_write> stAin: array<f32>;
-@group(0) @binding(9) var<storage, read_write> stAout: array<f32>;
-@group(0) @binding(10) var<storage, read_write> stBin: array<f32>;
-@group(0) @binding(11) var<storage, read_write> stBout: array<f32>;
-@group(0) @binding(12) var<storage, read_write> stColin: array<f32>;
-@group(0) @binding(13) var<storage, read_write> stColout: array<f32>;
+@group(0) @binding(7) var<uniform> brushA: f32;
+@group(0) @binding(8) var<uniform> brushAnoise: f32;
+@group(0) @binding(9) var<uniform> brushSize: f32;
+@group(0) @binding(10) var<storage, read_write> stAin: array<f32>;
+@group(0) @binding(11) var<storage, read_write> stAout: array<f32>;
+@group(0) @binding(12) var<storage, read_write> stBin: array<f32>;
+@group(0) @binding(13) var<storage, read_write> stBout: array<f32>;
+@group(0) @binding(14) var<storage, read_write> stColin: array<f32>;
+@group(0) @binding(15) var<storage, read_write> stColout: array<f32>;
 
 fn index(x:i32, y:i32) -> u32 {
   let _res = vec2i(res);
@@ -55,13 +57,10 @@ fn laplaceB(x:i32, y:i32) -> f32 {
 }
 
 fn blendAdjacentColors(x:i32, y:i32) {
-  var total = stAin[index(x, y)] * -1.0;
-
   let idx = index(x, y);
 
   var myRGB : vec3f = vec3f(stColin[idx*3], stColin[(idx*3)+1], stColin[(idx*3)+2]);
 
-  var colorTotal : vec3f = vec3f(0.);
   var substanceTotal : f32 = 0.;
   for(var i : i32 = 0; i < 9; i++) {
       let offsetX = (i % 3) - 1;
@@ -82,7 +81,7 @@ fn blendAdjacentColors(x:i32, y:i32) {
 
       let thisRGB : vec3f = vec3f(stColin[thisIdx*3], stColin[(thisIdx*3)+1], stColin[(thisIdx*3)+2]);
 
-      myRGB = mix(myRGB, thisRGB, stBin[thisIdx] * weight);
+      myRGB = mix(myRGB, thisRGB, saturate((stBin[thisIdx] * weight) / stBin[idx]));
   }
 
   stColout[idx*3] = myRGB.x;
@@ -99,8 +98,10 @@ fn cs( @builtin(global_invocation_id) _cell:vec3u ) {
   let y = cell.y;
   let i = index(x, y);
 
-  if(mseState.z == 1.0 && distance(vec2(f32(x), f32(y)), mseState.xy) < 40){
-    stAout[i] = 0.2;
+  if(mseState.z == 1.0 && distance(vec2(f32(x), f32(y)), mseState.xy) < brushSize){
+    let p : vec2f = vec2f(f32(x), f32(y));
+    let noise = fract(sin(vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)))) * 43758.5453);
+    stAout[i] = saturate((noise.x * brushAnoise) + brushA);
     stBout[i] = 1.;
     stColout[i*3] = funColor.x;
     stColout[(i*3)+1] = funColor.y;

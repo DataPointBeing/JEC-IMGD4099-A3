@@ -1,7 +1,7 @@
 @group(0) @binding(0) var<uniform> res:   vec2f;
 @group(0) @binding(8) var<uniform> frames: f32;
-@group(0) @binding(10) var<storage> stBin: array<f32>;
-@group(0) @binding(12) var<storage> stColin: array<f32>;
+@group(0) @binding(12) var<storage> stBin: array<f32>;
+@group(0) @binding(14) var<storage> stColin: array<f32>;
 
 @fragment 
 fn fs( @builtin(position) pos : vec4f ) -> @location(0) vec4f {

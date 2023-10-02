@@ -53,7 +53,10 @@ const tpParams = {
    da: 1.00,
    db: 0.26,
    feed: 0.14,
-   kill: 0.047
+   kill: 0.047,
+   brushA: 0.2,
+   brushANoise: 0.05,
+   brushSize: 40
 };
 
 const pane = new Pane();
@@ -61,6 +64,9 @@ pane.addBinding(tpParams, 'da', {min: 0, max: 1 }).on('change',  e => {sg.unifor
 pane.addBinding(tpParams, 'db', {min: 0, max: 1 }).on('change',  e => {sg.uniforms.Db = e.value;});
 pane.addBinding(tpParams, 'feed', {min: 0, max: 0.5 }).on('change',  e => {sg.uniforms.f = e.value;});
 pane.addBinding(tpParams, 'kill', {min: 0, max: 0.5 }).on('change',  e => {sg.uniforms.k = e.value;});
+pane.addBinding(tpParams, 'brushA', {min: 0, max: 1 }).on('change',  e => {sg.uniforms.brushA = e.value;});
+pane.addBinding(tpParams, 'brushANoise', {min: 0, max: 5 }).on('change',  e => {sg.uniforms.brushANoise = e.value;});
+pane.addBinding(tpParams, 'brushSize', {min: 5, max: 200 }).on('change',  e => {sg.uniforms.brushSize = e.value;});
 
 
 sg.buffers({ stAin:stateA, stAout:stateA, stBin:stateB, stBout:stateB, stColin:stateColor, stColout:stateColor})
@@ -72,13 +78,12 @@ sg.buffers({ stAin:stateA, stAout:stateA, stBin:stateB, stBout:stateB, stColin:s
       k: tpParams.kill,
       mseState: mseState,
       funColor: funColor,
-      frames: 0.0
+      brushA: tpParams.brushA,
+      brushANoise: tpParams.brushANoise,
+      brushSize: tpParams.brushSize
    })
    .backbuffer(false)
    .pingpong(1)
-   .onframe(() =>
-      sg.uniforms.frames = frames++
-   )
    .compute(
       compute,
       [Math.round(window.innerWidth / 16), Math.round(window.innerHeight / 16), 1],
