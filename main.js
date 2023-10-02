@@ -59,8 +59,8 @@ const tpParams = {
 const pane = new Pane();
 pane.addBinding(tpParams, 'da', {min: 0, max: 1 }).on('change',  e => {sg.uniforms.Da = e.value;});
 pane.addBinding(tpParams, 'db', {min: 0, max: 1 }).on('change',  e => {sg.uniforms.Db = e.value;});
-pane.addBinding(tpParams, 'feed', {min: 0, max: 0.5 }).on('change',  e => {sg.uniforms.feed = e.value;});
-pane.addBinding(tpParams, 'kill', {min: 0, max: 0.5 }).on('change',  e => {sg.uniforms.kill = e.value;});
+pane.addBinding(tpParams, 'feed', {min: 0, max: 0.5 }).on('change',  e => {sg.uniforms.f = e.value;});
+pane.addBinding(tpParams, 'kill', {min: 0, max: 0.5 }).on('change',  e => {sg.uniforms.k = e.value;});
 
 
 sg.buffers({ stAin:stateA, stAout:stateA, stBin:stateB, stBout:stateB, stColin:stateColor, stColout:stateColor})
